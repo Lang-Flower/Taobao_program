@@ -1,0 +1,140 @@
+///////////////////////////////熵权法
+clear
+clc
+disp('指示值')
+L=xlsread('data三维.xls',-1)%指示值
+disp('指标值')
+X=xlsread('data三维.xls',-1)%指标值
+[m,n]=size(X)
+R=zeros(m,n)
+for i=1:m
+    for j=1:n
+       if L(j)==1
+R(i,j)=(X(i,j)-min(X(:,j)))/(max(X(:,j))-min(X(:,j)))
+       else
+R(i,j)=(max(X(:,j))-X(i,j))/(max(X(:,j))-min(X(:,j)))
+       end
+     end
+   end
+sumR=sum(R)
+p=zeros(m,n)
+for i=1:m
+     for j=1:n
+        p(i,j)=R(i,j)/sumR(j)
+     end
+   end
+tp=zeros(m,n)
+for i=1:m
+    for j=1:n
+       if p(i,j) <=0
+          tp(i,j) =0     
+       else
+          tp(i,j)=p(i,j)*log(p(i,j))
+       end
+     end 
+   end
+H=-sum(tp)
+E=H/log(m)
+G=1-E
+W=G/sum(G)
+///////////////////////////////OWA算子时间赋权
+clear
+clc
+disp('权重决策数据')
+a=xlsread('data三维.xls',-1)%权重决策数据
+X=mean(a,1)
+Y=std(a,0,1)
+Z=zscore(a)
+F=normpdf(Z)
+[m,n]=size(F)
+for i=1:n
+    A(1,i)=norm(F(:,i))
+end
+A=repmat(A,m,1);
+Y=F./A
+///////////////////////////////TOPSIS法
+clear
+clc
+disp('指示值')
+L=xlsread('data三维.xls',-1)%指示值
+disp('指标值')
+X=xlsread('data三维.xls',-1)%指标值
+disp('权重值')
+W=xlsread('data三维.xls',-1)%权重值
+[m,n]=size(X)
+V=zeros(m,n)
+for i=1:m
+    for j=1:n
+       if L(j)==1
+V(i,j)=(X(i,j)-min(X(:,j)))/(max(X(:,j))-min(X(:,j)))
+       else
+V(i,j)=(max(X(:,j))-X(i,j))/(max(X(:,j))-min(X(:,j)))
+       end
+     end
+   end
+R=zeros(m,n)
+for i=1:m
+     for j=1:n
+        R(i,j)=W(j)*V(i,j)
+     end
+ end
+SP=zeros(1,n)
+SM=zeros(1,n)
+for j=1:n
+   if L(j)==1
+     SP(j)=max(R(:,j))
+     SM(j)=min(R(:,j))
+   else
+     SP(j)=min(R(:,j))
+     SM(j)=max(R(:,j))
+   end
+ end
+SdP=zeros(1,m)
+for i=1:m
+     s=0
+     for j=1:n
+        s=s+(SP(j)-R(i,j))^2
+     end
+     SdP(i)=sqrt(s)
+ end
+SdM=zeros(1,m)
+for i=1:m
+    s=0
+    for j=1:n
+       s=s+(SM(j)-R(i,j))^2
+     end
+     SdM(i)=sqrt(s)
+ end
+yita=zeros(1,m)
+for i=1:m
+   yita(i) =SdM(i) /(SdP(i)+SdM(i))
+ end
+三维、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+clear
+clc
+disp('Ain{i}')
+Ain{1}=xlsread('data_entro-py.xls',-1)
+Ain{2}=xlsread('data_entro-py.xls',-1)
+Ain{3}=xlsread('data_entro-py.xls',-1)
+Ain{4}=xlsread('data_entro-py.xls',-1)
+Ain{5}=xlsread('data_entro-py.xls',-1)
+Ain{6}=xlsread('data_entro-py.xls',-1)
+Ain{7}=xlsread('data_entro-py.xls',-1)
+disp('指标权重')
+W1=xlsread('data三维.xls',-1)
+disp('时间权重')
+W2=xlsread('data三维.xls',-1)
+for i=1:7
+    Ain{i}=Ain{i}.*W1.*W2
+end
+
+Ain{1}=Ain{1}.*W1.*W2
+Ain{2}=Ain{2}.*W1.*W2
+Ain{3}=Ain{3}.*W1.*W2
+Ain{4}=Ain{4}.*W1.*W2
+Ain{5}=Ain{5}.*W1.*W2
+Ain{6}=Ain{6}.*W1.*W2
+Ain{7}=Ain{7}.*W1.*W2
+Ain{i}=zscore(Ain{i})
+ideal
+distant
